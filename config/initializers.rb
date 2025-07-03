@@ -53,9 +53,9 @@ Bridgetown.configure do |config|
   # `bin/bridgetown roda:routes` to print the routes. (This will require you to
   # comment your route blocks. See example in `server/routes/hello.rb.sample`.)
   #
-  # only :server do
-  #   init :parse_routes
-  # end
+  only :server do
+    init :parse_routes
+  end
   #
 
   # For more documentation on how to configure your site using this initializers file,
