@@ -4,7 +4,7 @@ class Routes::Hello < Bridgetown::Rack::Routes
   route do |r|
     # route: GET /hello/:name
     r.get "hello", String do |name|
-      { hello: "friend #{name}" }
+      render Views::Greeting.new(name: name)
     end
   end
 end

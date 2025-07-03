@@ -51,7 +51,7 @@ Bridgetown.configure do |config|
   # We also recommend that if you're using Roda routes you include this plugin
   # so you can get a generated routes list in `.routes.json`. You can then run
   # `bin/bridgetown roda:routes` to print the routes. (This will require you to
-  # comment your route blocks. See example in `server/routes/hello.rb.sample`.)
+  # comment your route blocks. See example in `server/routes/hello.rb`.)
   #
   only :server do
     init :parse_routes
