@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "20"
           cache: "npm"
       - run: npm install
 
@@ -32,6 +32,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./output
+      - name: Debug output folder
+        run: ls -la ./output
 
   deploy:
     needs: build
