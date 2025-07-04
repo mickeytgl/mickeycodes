@@ -34,6 +34,8 @@ jobs:
           path: ./output
       - name: Debug output folder
         run: ls -la ./output
+      - name: Debug output folder
+        run: ls -la ./output
 
   deploy:
     needs: build
