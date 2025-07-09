@@ -17,8 +17,8 @@
 # https://learnxinyminutes.com/docs/yaml/
 #
 
-url: "https://mickytgl.github.io" # the base hostname & protocol for your site, e.g. https://example.com
-base_path: "/mickeycodes"
+url: "https://mickeycodes.com" # the base hostname & protocol for your site, e.g. https://example.com
+#base_path: "/mickeycodes"
 
 permalink: pretty
 template_engine: erb
