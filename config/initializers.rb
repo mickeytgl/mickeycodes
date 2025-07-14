@@ -34,7 +34,7 @@ Bridgetown.configure do |config|
   # For example, you can use the Dotenv gem to load environment variables from
   # `.env`. Just `bundle add dotenv` and then uncomment this:
   #
-  # init :dotenv
+  init :dotenv
   #
 
   # Uncomment to use Bridgetown SSR (aka dynamic rendering of content via Roda):

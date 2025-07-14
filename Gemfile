@@ -38,3 +38,5 @@ gem "puma", "< 7"
 
 # Or for faster parsing of HTML-only resources via Inspectors, use Nokolexbor:
 # gem "nokolexbor", "~> 0.4"
+
+gem "dotenv", "~> 3.1"
