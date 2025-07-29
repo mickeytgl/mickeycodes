@@ -1,6 +1,24 @@
-PATH
-  remote: ../bridgetown
+GEM
+  remote: https://rubygems.org/
   specs:
+    activesupport (7.2.2.1)
+      base64
+      benchmark (>= 0.3)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.3.1)
+      connection_pool (>= 2.2.5)
+      drb
+      i18n (>= 1.6, < 2)
+      logger (>= 1.4.2)
+      minitest (>= 5.1)
+      securerandom (>= 0.3)
+      tzinfo (~> 2.0, >= 2.0.5)
+    addressable (2.8.7)
+      public_suffix (>= 2.0.2, < 7.0)
+    amazing_print (1.8.1)
+    base64 (0.3.0)
+    benchmark (0.4.1)
+    bigdecimal (3.2.2)
     bridgetown (2.0.0.beta5)
       bridgetown-builder (= 2.0.0.beta5)
       bridgetown-core (= 2.0.0.beta5)
@@ -41,28 +59,6 @@ PATH
       zeitwerk (~> 2.5)
     bridgetown-paginate (2.0.0.beta5)
       bridgetown-core (= 2.0.0.beta5)
-
-GEM
-  remote: https://rubygems.org/
-  specs:
-    activesupport (7.2.2.1)
-      base64
-      benchmark (>= 0.3)
-      bigdecimal
-      concurrent-ruby (~> 1.0, >= 1.3.1)
-      connection_pool (>= 2.2.5)
-      drb
-      i18n (>= 1.6, < 2)
-      logger (>= 1.4.2)
-      minitest (>= 5.1)
-      securerandom (>= 0.3)
-      tzinfo (~> 2.0, >= 2.0.5)
-    addressable (2.8.7)
-      public_suffix (>= 2.0.2, < 7.0)
-    amazing_print (1.8.1)
-    base64 (0.3.0)
-    benchmark (0.4.1)
-    bigdecimal (3.2.2)
     bridgetown-routes (2.0.0.beta5)
       bridgetown-core (= 2.0.0.beta5)
       roda-route_list (>= 2.1)
@@ -176,11 +172,11 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  bridgetown (~> 2.0.0.beta5)!
-  bridgetown-builder (~> 2.0.0.beta5)!
-  bridgetown-core (~> 2.0.0.beta5)!
-  bridgetown-foundation (~> 2.0.0.beta5)!
-  bridgetown-paginate (~> 2.0.0.beta5)!
+  bridgetown (~> 2.0.0.beta5)
+  bridgetown-builder (~> 2.0.0.beta5)
+  bridgetown-core (~> 2.0.0.beta5)
+  bridgetown-foundation (~> 2.0.0.beta5)
+  bridgetown-paginate (~> 2.0.0.beta5)
   bridgetown-routes (~> 2.0.0.beta5)
   dotenv (~> 3.1)
   puma (< 7)
