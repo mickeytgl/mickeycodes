@@ -1,6 +1,12 @@
-module.exports = {
+export default {
   plugins: {
-    "@tailwindcss/postcss": {},
+    "@tailwindcss/postcss": {
+      content: [
+        './src/**/*.{html,md,liquid,erb,serb,slim}',
+        './src/_components/**/*.{js,jsx,js.rb}',
+        './frontend/javascript/**/*.js'
+      ]
+    },
     'postcss-flexbugs-fixes': {},
     'postcss-preset-env': {
       autoprefixer: {
