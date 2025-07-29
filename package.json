@@ -9,11 +9,15 @@
   "devDependencies": {
     "esbuild": "^0.19.2",
     "glob": "^10.3.3",
-    "postcss": "^8.4.29",
+    "postcss": "^8.5.6",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-import": "^15.1.0",
     "postcss-load-config": "^4.0.1",
     "postcss-preset-env": "^9.1.2",
-    "read-cache": "^1.0.0"
+    "read-cache": "^1.0.0",
+    "tailwindcss": "^4.1.11"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.11"
   }
 }

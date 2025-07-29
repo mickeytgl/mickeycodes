@@ -3,10 +3,10 @@
 <head>
     <%= render "head", metadata: site.metadata, title: data.title %>
 </head>
-<body class="<%= data.layout %> <%= data.page_class %>">
+<body class="<%= data.layout %> <%= data.page_class %> container mx-auto px-6 py-4 md:py-24">
 <%= render "navbar", metadata: site.metadata, resource: resource %>
 
-<main>
+<main class="">
     <%= content %>
 </main>
 
