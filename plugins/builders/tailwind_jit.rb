@@ -13,7 +13,7 @@ class Builders::TailwindJit < SiteBuilder
         fast_refreshing = false
 
         Thread.new do
-          sleep 1
+          sleep 0.7
           puts "Refreshing JIT CSS..."
 
           refresh_file = site.in_root_dir("frontend", "styles", "jit-refresh.css")
