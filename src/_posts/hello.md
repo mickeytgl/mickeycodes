@@ -2,7 +2,7 @@
 layout: post
 title:  "Your First Post on Bridgetown"
 date:   2025-07-03 12:01:16 +0200
-categories: updates
+categories: articles
 ---
 
 <p>You'll find this post in your <code>_posts</code> directory. Go ahead and edit it and re-build the site to see your

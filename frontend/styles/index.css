@@ -5,4 +5,7 @@
     body {
         @apply bg-stone-50;
     }
+    p {
+        @apply text-gray-700;
+    }
 }

@@ -20,7 +20,7 @@
 url: "https://mickeycodes.com" # the base hostname & protocol for your site, e.g. https://example.com
 #base_path: "/mickeycodes"
 
-permalink: pretty
+permalink: simple
 template_engine: erb
 timezone: Europe/Madrid
 
