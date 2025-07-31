@@ -34,7 +34,7 @@ Bridgetown.configure do |config|
   # For example, you can use the Dotenv gem to load environment variables from
   # `.env`. Just `bundle add dotenv` and then uncomment this:
   #
-  init :dotenv
+  # init :dotenv
   #
 
   # Uncomment to use Bridgetown SSR (aka dynamic rendering of content via Roda):
@@ -45,7 +45,7 @@ Bridgetown.configure do |config|
   # Uncomment to use file-based dynamic template routing via Roda (make sure you
   # uncomment the gem dependency in your `Gemfile` as well):
   #
-  init :"bridgetown-routes"
+  # init :"bridgetown-routes"
   #
 
   # We also recommend that if you're using Roda routes you include this plugin
@@ -53,9 +53,9 @@ Bridgetown.configure do |config|
   # `bin/bridgetown roda:routes` to print the routes. (This will require you to
   # comment your route blocks. See example in `server/routes/hello.rb`.)
   #
-  only :server do
-    init :parse_routes
-  end
+  # only :server do
+  #   init :parse_routes
+  # end
   #
 
   # For more documentation on how to configure your site using this initializers file,

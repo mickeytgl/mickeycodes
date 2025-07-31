@@ -26,7 +26,7 @@ gem 'bridgetown-foundation', '~> 2.0.0.beta5'
 gem 'bridgetown-paginate', '~> 2.0.0.beta5'
 
 # Uncomment to add file-based dynamic routing to your project:
-gem "bridgetown-routes", "~> 2.0.0.beta5"
+# gem "bridgetown-routes", "~> 2.0.0.beta5"
 
 # Puma is the Rack-compatible web server used by Bridgetown
 # (you can optionally limit this to the "development" group)
@@ -40,3 +40,5 @@ gem "puma", "< 7"
 # gem "nokolexbor", "~> 0.4"
 
 gem "dotenv", "~> 3.1"
+
+gem "rack-mini-profiler", "~> 4.0"
