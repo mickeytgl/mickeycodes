@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "./jit-refresh.css";
+@import "@catppuccin/highlightjs/css/catppuccin-latte.css";
+@import "@catppuccin/highlightjs/css/catppuccin-frappe.css";
+@import "@catppuccin/tailwindcss/frappe.css";
 
 @layer base {
     body {
