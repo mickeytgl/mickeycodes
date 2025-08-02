@@ -12,3 +12,19 @@
         @apply text-gray-700;
     }
 }
+
+code {
+    @apply p-0.5;
+    @apply rounded-md;
+}
+
+pre.highlight {
+    padding: 16px;
+    background-color: #303446;
+    margin-bottom: rem;
+    @apply rounded-lg
+}
+
+div.highlighter-rouge {
+    @apply py-8;
+}
