@@ -28,3 +28,7 @@ pre.highlight {
 div.highlighter-rouge {
     @apply py-8;
 }
+
+a {
+    color: #1e66f5;
+}
