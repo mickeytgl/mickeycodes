@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Out of order webhooks"
+title:  "When Webhooks Go Out of Order and How to Fix It"
 date:   2025-07-03 12:01:16 +0200
 categories: articles
 ---
