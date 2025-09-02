@@ -5,9 +5,13 @@ date:   2025-07-03 12:01:16 +0200
 categories: articles
 ---
 
-Webhooks is a deceivingly complex topic. In the beginning they can be really easy to set and forget, and precisely because they are implemented normally very early in your codebase’s journey, where traffic is low and requests are sparse, that subtle wrong decisions can cement, and later on they can lead to errors that are hard to identify and track down.
+Webhooks is a deceivingly complex topic. They look simple… until they quietly corrupt your data. One of the sneakiest problems are events that arrive out of order.
 
-I don’t want to get into all of the different elements that need to be considered when building webhooks (at least not in this one article), but I do want to talk about one specifically that can be really painful if you’re not aware of a small, but very important about webhooks of any service: Webhooks don’t always arrive in the order that you would expect… And that’s expected. At some point in your journey, your `payment.created` event will arrive after your `payment.updated` event, and you will have to deal with it on your side.
+I won't get into all the different elements that need to be considered when building webhooks. However, I do want to talk about one specifically that can be really painful if you’re not aware of this small, but crucial characteristic about webhooks:
+
+**Webhooks don’t always arrive in the order that you would expect… And that’s expected.** 
+
+At some point in your journey, your `payment.created` event will arrive after your `payment.updated` event, and you will have to deal with it on your side.
 
 Distributed systems don’t promise perfect order. Stripe, for example, explicitly states that [event order isn’t guaranteed](https://docs.stripe.com/webhooks#event-ordering), and there’s many examples online of people talking about this on [reddit](https://www.reddit.com/r/rails/comments/qviijd/system_design_for_receiving_webhooks/), on [forums](https://developer.squareup.com/forums/t/order-state-checkout-api-webhooks/7769?utm_source=chatgpt.com) or on [GitHub]([https://github.com/stripe/stripe-cli/issues/418](https://github.com/stripe/stripe-cli/issues/418?utm_source=chatgpt.com)) where people have ran into this issue.  
 

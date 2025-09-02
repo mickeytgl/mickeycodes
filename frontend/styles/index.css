@@ -36,12 +36,15 @@ div.highlighter-rouge {
         @apply hover:underline;
     }
     .markdown p {
-        @apply my-4;
-    }
-    .markdown h1 {
-        @apply text-3xl;
+        @apply my-6 text-base/7 tracking-wide;
+        color: #4c4f69;
     }
     .markdown h2 {
-        @apply text-xl font-bold pt-3;
+        @apply text-3xl font-extrabold py-4 tracking-wide;
+        color: #4c4f69;
     }
+    .markdown img {
+        @apply py-6;
+    }
+
 }
