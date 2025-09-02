@@ -5,13 +5,13 @@ date:   2025-07-03 12:01:16 +0200
 categories: articles
 ---
 
-Webhooks is a topic that can be deceivingly complex. In the beginning they can be really easy to set and forget, and precisely because they are implemented normally very early in your codebase’s journey, where traffic is low and requests are sparse, that subtle wrong decisions can cement and later on they can lead to errors that are hard to identify and track down.
+Webhooks is a deceivingly complex topic. In the beginning they can be really easy to set and forget, and precisely because they are implemented normally very early in your codebase’s journey, where traffic is low and requests are sparse, that subtle wrong decisions can cement, and later on they can lead to errors that are hard to identify and track down.
 
 I don’t want to get into all of the different elements that need to be considered when building webhooks (at least not in this one article), but I do want to talk about one specifically that can be really painful if you’re not aware of a small, but very important about webhooks of any service: Webhooks don’t always arrive in the order that you would expect… And that’s expected. At some point in your journey, your `payment.created` event will arrive after your `payment.updated` event, and you will have to deal with it on your side.
 
-Distributed systems don’t promise perfect order. Stripe, for example, explicitly states that [event order isn’t guaranteed](https://docs.stripe.com/webhooks#event-ordering), and there’s many examples online of people talking about this on [reddit](https://www.reddit.com/r/rails/comments/qviijd/system_design_for_receiving_webhooks/), on [forums](https://developer.squareup.com/forums/t/order-state-checkout-api-webhooks/7769?utm_source=chatgpt.com) or on [GitHub]([https://github.com/stripe/stripe-cli/issues/418](https://github.com/stripe/stripe-cli/issues/418?utm_source=chatgpt.com)) where people have ran into this issue.
+Distributed systems don’t promise perfect order. Stripe, for example, explicitly states that [event order isn’t guaranteed](https://docs.stripe.com/webhooks#event-ordering), and there’s many examples online of people talking about this on [reddit](https://www.reddit.com/r/rails/comments/qviijd/system_design_for_receiving_webhooks/), on [forums](https://developer.squareup.com/forums/t/order-state-checkout-api-webhooks/7769?utm_source=chatgpt.com) or on [GitHub]([https://github.com/stripe/stripe-cli/issues/418](https://github.com/stripe/stripe-cli/issues/418?utm_source=chatgpt.com)) where people have ran into this issue.  
 
-### A Naive Handler
+## A Naive Handler
 
 ```ruby
 def handle_payment_updated(event)
@@ -20,9 +20,37 @@ def handle_payment_updated(event)
 end
 ```
 
-This seems okay during dev. But if updated arrives before created, payment is nil, and your system slowly starts looking more and more different from the source of truth.
+This seems okay during dev. But if updated arrives before created, payment is nil, and your system quickly drifts away from the provider's source of truth. 
 
-### Fetching again
+
+[//]: # (```mermaid)
+
+[//]: # (sequenceDiagram)
+
+[//]: # (    participant Stripe)
+
+[//]: # (    participant App)
+
+[//]: # ()
+[//]: # (    Stripe->>App: payment.updated)
+
+[//]: # (    App->>App: Find Payment &#40;not found&#41;)
+
+[//]: # (    App->>App: ❌ Error &#40;record missing&#41;)
+
+[//]: # ()
+[//]: # (    Stripe->>App: payment.created)
+
+[//]: # (    App->>App: Insert Payment)
+
+[//]: # (```)
+
+![Webhooks events being processed in the order they arrive](/images/out-of-order-handilng.png)
+
+
+In the example above, the `payment.updated` event arrives before the `payment.created` event, and the `payment.updated` event is dropped.
+
+## Fetching again
 
 A way to get around this, (and the most resilient in my opinion) is to fetch the resource again so you can grab the latest state. I find it helpful to change mindset to acknowledge that **webhooks are notifications, not the source of truth.**
 
@@ -48,119 +76,85 @@ end
 
 Now, even if events shuffle, you always reconcile against the provider’s canonical state.
 
-Distributed systems don’t promise perfect order. Stripe, for instance,—even customer.subscription.created might follow customer.subscription.updated in delivery     . GitHub developer threads echo this: “We do not provide explicit ordering for webhook events…”  .
 
-A developer on StackOverflow ran into it firsthand:
+[//]: # (```mermaid)
 
-> “From the CLI it seems that the webhook payment_intent.processing is being received before payment_intent.created… this results in an error undefined method 'update!' for nil:NilClass since I’m trying to update a record that doesn’t exist yet.”
->
+[//]: # (sequenceDiagram)
 
-Stripe’s docs also warn: **don’t assume event delivery order**. You “may receive invoice.paid before invoice.created,” so design accordingly  .
+[//]: # (participant Stripe)
 
----
+[//]: # (participant App)
 
-## **The Naïve Handler (and Why It Fails)**
+[//]: # (participant StripeAPI as Stripe API)
 
-```
-def handle_payment_updated(event)
-  payment = Payment.find_by(stripe_id: event.data.object.id)
-  payment.update!(status: event.data.object.status)
-end
-```
+[//]: # ()
+[//]: # (    Stripe->>App: payment.updated)
 
-This seems okay during dev. But if updated arrives before created, payment is nil, and your system breaks—slowly desyncing from truth.
+[//]: # (    App->>StripeAPI: Fetch latest Payment)
 
----
+[//]: # (    StripeAPI-->>App: Canonical Payment state)
 
-## **The Fetch-Again Pattern: A Simple, Resilient Fix**
+[//]: # (    App->>App: Upsert Payment ✅)
 
-Shift your mindset: **webhooks are notifications—not the source of truth.**
+[//]: # ()
+[//]: # (    Stripe->>App: payment.created)
 
-In Rails:
+[//]: # (    App->>StripeAPI: Fetch latest Payment)
 
-```
-def handle_payment_updated(event)
-  id = event.data.object.id
-  payment = Payment.find_by(stripe_id: id)
+[//]: # (    StripeAPI-->>App: Canonical Payment state)
 
-  unless payment
-    data = Stripe::PaymentIntent.retrieve(id)
-    payment = Payment.create!(
-      stripe_id: data.id,
-      amount: data.amount,
-      status: data.status
-    )
-  end
+[//]: # (    App->>App: Upsert Payment &#40;idempotent&#41;)
 
-  payment.update!(status: event.data.object.status)
-end
-```
+[//]: # (```)
 
-Now, even if events shuffle, you always reconcile against the provider’s canonical state.
+![Webhooks events being processed in the order they arrive](/images/out-of-order-fetching-again.png)
 
----
+Here, the `payment.updated` event arrives after the `payment.created` event, and the `payment.updated` event is applied. This way our app provides a consistent view of the world.
 
-## **Beyond “Fetch Again”: Patterns for Resilient Webhook Handling**
 
-Fetching again solves ordering, but true resilience needs more patterns:
+## Other Approaches & Trade-offs
 
-### **1.**
+There isn’t a single “correct” way to handle out-of-order webhooks. Fetching from the provider is the most resilient, but it’s worth knowing what else is out there.
 
-### **Idempotency**
+**Event versioning / timestamps**
 
-Track processed event IDs to prevent duplicates and double-processing.
+Some developers rely on the event’s created_at timestamp to ignore stale updates.
 
-### **2.**
+✅ Simple to implement.
 
-### **Background Jobs**
+❌ Risky if events are truly missing — you might silently drop an important state change.
 
-Acknowledge the webhook quickly (200 OK) and enqueue logic-heavy tasks in Sidekiq or Resque. This avoids timeouts and failure cascades.
+**Event buffering / queuing**
 
-### **3.**
+You can queue incoming events, sort them by creation time, then apply them in order.
 
-### **Timestamp Ordering**
+✅ Preserves sequence when traffic is heavy.
 
-Compare event timestamps to avoid applying stale updates. A developer suggests:
+❌ Adds complexity. Queues can back up, and you still can’t guarantee you got all events.
 
-> “Maybe check the timestamp on the event and save only if it’s greater than the one in your DB?”
->
+**Idempotent upserts**
 
-### **4.**
+Instead of updating blindly, always “upsert” using an external ID (find_or_create + update_or_insert).
 
-### **Monitoring & Alerts**
+✅ Prevents crashes when update arrives before create.
 
-Log failures, use a dead-letter queue if needed—silent webhook failures are one of the worst hidden bugs.
+❌ Doesn’t fix the stale data problem.
 
----
+**Ignore certain states**
 
-## **Other Perspectives: What the Community Says**
+For example, only update when an event reflects a terminal state (succeeded, failed).
 
-On Reddit, a user describes receiving events like Invoice paid before Customer create:
+✅ Cuts down noise and risk from transient states.
 
-> “We process a metric fuck-ton of webhooks… Out-of-order is real. Eventually we handled status via separate columns per status and always pick the highest-order status.”
->
+❌ Loses visibility into intermediate states.
 
-On software engineering StackExchange, someone asks about building a reliable event stream integration without ordering guarantees. The top answer advises:
+👉 My personal preference is to use reconciliation as the default, and layer in one of these if you have specific performance or product needs.
 
-> “The usual answer is ‘don’t do that’—if you need ordered events, build an ordered projection yourself, or embed causation metadata.”
->
+## Isn't fetching expensive?
 
----
+Yes, that's fair concern. And sure, if you naively hit the API on every single webhook, it can add up. The trick is to be smart about it. Batch requests if your provider supports it, debounce events for the same resource so you only fetch once per burst, and lean on caching or ETags so you don’t download data that hasn’t changed. Add a periodic sweep job to backfill anything you might have missed, and suddenly those “extra” API calls aren’t nearly as scary. In practice, you usually end up making fewer writes overall, because one reconciliation replaces a whole string of noisy updates.
 
-## **Case Study: The Phantom Refund**
 
-A client’s refunds were vanishing. Logs showed refund.updated arriving before refund.created, silently dropping data. After switching to “fetch again,” ghost refunds vanished. Every event now led to a state sync, not guesswork.
+## Conclusion
 
----
-
-## **Final Takeaways**
-
-- **Don’t trust webhook order.** Out-of-order delivery is common.
-- **Always re-fetch from the source.** Treat webhooks as nudges, not the truth.
-- **Add resilience layers.** Idempotency, background processing, timestamp checks, and observability are your safety net.
-
-Most payment system bugs stem from these subtleties—not from complex feature code. Fixing the foundation means fewer 2 AM surprises and more confidence that your system is reliable.
-
----
-
-Let me know if you’d like **visual diagrams** (like event timelines) or **Rails-specific code snippets** (e.g., idempotency middleware) to enhance this further!
+The reason I prefer fetching again over the other tricks is because it always gets you back to the truth. Timestamps, queues, or idempotent upserts can all help in certain cases, but they rely on the assumption that you’ll see every event in the right order. In the real world, events go missing, arrive late, or show up twice. By treating webhooks as just a nudge and then pulling the actual state from the provider, you make your system self-healing. Even if things get messy in transit, you’ll always reconcile against the source of truth and end up consistent. That peace of mind is worth a few extra API calls.
