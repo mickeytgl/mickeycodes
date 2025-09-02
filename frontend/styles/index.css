@@ -31,8 +31,17 @@ div.highlighter-rouge {
 
 
 @layer components {
- .markdown a {
-     color: #1e66f5;
-     @apply hover:underline;
- }
+    .markdown a {
+        color: #1e66f5;
+        @apply hover:underline;
+    }
+    .markdown p {
+        @apply my-4;
+    }
+    .markdown h1 {
+        @apply text-3xl;
+    }
+    .markdown h2 {
+        @apply text-xl font-bold pt-3;
+    }
 }
