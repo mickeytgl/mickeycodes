@@ -13,7 +13,7 @@ I won't get into all the different elements that need to be considered when buil
 
 At some point in your journey, your `payment.created` event will arrive after your `payment.updated` event, and you will have to deal with it on your side.
 
-Distributed systems don’t promise perfect order. Stripe, for example, explicitly states that [event order isn’t guaranteed](https://docs.stripe.com/webhooks#event-ordering), and there’s many examples online of people talking about this on [reddit](https://www.reddit.com/r/rails/comments/qviijd/system_design_for_receiving_webhooks/), on [forums](https://developer.squareup.com/forums/t/order-state-checkout-api-webhooks/7769?utm_source=chatgpt.com) or on [GitHub]([https://github.com/stripe/stripe-cli/issues/418](https://github.com/stripe/stripe-cli/issues/418?utm_source=chatgpt.com)) where people have ran into this issue.  
+Distributed systems don’t promise perfect order. Stripe, for example, explicitly states that [event order isn’t guaranteed](https://docs.stripe.com/webhooks#event-ordering), and there’s many examples online of people talking about this on [reddit](https://www.reddit.com/r/rails/comments/qviijd/system_design_for_receiving_webhooks/), on [forums](https://developer.squareup.com/forums/t/order-state-checkout-api-webhooks/7769) or on [GitHub](https://github.com/stripe/stripe-cli/issues/418) where people have ran into this issue.  
 
 ## A Naive Handler
 
